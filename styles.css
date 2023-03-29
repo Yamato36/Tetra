@@ -1,0 +1,97 @@
+* {
+    font-family: 'Press Start 2P', cursive;
+}
+
+.container {
+    display: flex;
+}
+
+.info {
+    margin-left: 40px;
+    margin-top: 20px;
+}
+
+.grid {
+    width: 200px;
+    height: 400px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    margin-left: 40px;
+    background-color: rgb(145, 145, 145);
+}
+
+.grid div {
+    height: 20px;
+    width: 20px;
+}
+
+#hold {
+    margin-top: 68px;
+    margin-left: 2px;
+}
+
+.hold-grid {
+    width: 80px;
+    height: 40px;
+    flex-wrap: wrap ;
+    display: flex;
+}
+
+.hold-grid div {
+    height: 20px;
+    width: 20px;
+}
+
+#next {
+    margin-top: 20px;
+    margin-left: 2px;
+}
+
+.preview-grid {
+    width: 80px;
+    height: 40px;
+    flex-wrap: wrap ;
+    display: flex;
+}
+
+.preview-grid div {
+    height: 20px;
+    width: 20px;
+}
+
+.pieceOrange {
+    background-color: rgb(255, 169, 9);
+}
+
+.pieceBlue {
+    background-color: rgb(88, 88, 255);
+}
+
+.pieceGreen {
+    background-color: rgb(189, 238, 117);
+}
+
+.pieceRed {
+    background-color: rgb(223, 81, 81);
+}
+
+.piecePurple {
+    background-color: rgb(143, 42, 143);
+}
+
+.pieceYellow {
+    background-color: rgb(255, 255, 111);
+}
+
+.pieceLightBlue {
+    background-color: rgb(129, 224, 255);
+}
+
+#play-button {
+    background-color: darkgreen;
+    font-size: 16px;
+    padding: 15px 30px;
+    cursor: pointer;
+    margin-top: 15px;
+}
