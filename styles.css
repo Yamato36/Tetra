@@ -4,9 +4,10 @@
 
 h1 {
     color: rgb(160, 160, 160);
+    font-size: 60px;
 }
 
-h3 {
+h2 {
     color: rgb(160, 160, 160);
 }
 
@@ -20,7 +21,7 @@ body {
 
 .info {
     margin-left: 40px;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .data {
@@ -28,12 +29,12 @@ body {
 }
 
 .grid {
-    width: 310px;
-    height: 620px;
+    width: 410px;
+    height: 820px;
     display: flex;
     flex-wrap: wrap;
     margin-top: 40px;
-    margin-left: 38.5%;
+    margin-left: 40%;
     background-color: rgb(42, 42, 42);
     border-top: 1px solid rgb(160, 160, 160);
     border-left: 1px solid rgb(160, 160, 160);
@@ -47,27 +48,27 @@ body {
 }
 
 .grid div {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
     border-top: 1px solid rgb(160, 160, 160);
     border-left: 1px solid rgb(160, 160, 160);
 }
 
 #hold {
-    margin-top: 100px;
+    margin-top: 150px;
     margin-left: 2px;
 }
 
 .hold-grid {
-    width: 120px;
-    height: 60px;
+    width: 160px;
+    height: 80px;
     flex-wrap: wrap ;
     display: flex;
 }
 
 .hold-grid div {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
 }
 
 #next {
@@ -76,15 +77,15 @@ body {
 }
 
 .preview-grid {
-    width: 120px;
-    height: 60px;
+    width: 160px;
+    height: 80px;
     flex-wrap: wrap ;
     display: flex;
 }
 
 .preview-grid div {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
 }
 
 .pieceOrange {
@@ -108,7 +109,7 @@ body {
 }
 
 .pieceYellow {
-    background-color: rgb(255, 255, 111);
+    background-color: rgb(240, 240, 99);
 }
 
 .pieceLightBlue {
@@ -118,10 +119,10 @@ body {
 #play-button {
     background-color: rgb(0, 80, 0);
     color: rgb(160, 160, 160);
-    font-size: 16px;
-    padding: 15px 30px;
+    font-size: 20px;
+    padding: 20px 40px;
     cursor: pointer;
-    margin-top: 86px;
+    margin-top: 124px;
 }
 
 #play-button:hover {
