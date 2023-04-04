@@ -103,22 +103,22 @@ let currentRot = 0
 let currentIndex = 0
 let currentPiece = bag[currentIndex][currentRot]
 let currentPos = spawnPos[pieceDetector(bag[currentIndex][0])]
-let nextIndex = 1
-let timerId
-let lines = 0
-let gravity = 750
 let level = 0
+let lines = 0
+let gravity = 75000000
+let nextIndex = 1
 let linesRequired = 4
 let holdPieceIndex
 let previewIndex
 let nextColour
+let timerId
 
 previewSquares.forEach(previewSquares => {
     previewSquares.className = ''
 })
 
 function reset() {
-    
+    clearInterval(timerId)
     undraw()
 
     for (let i = 0; i < 199; i ++) {
@@ -141,10 +141,10 @@ function reset() {
     currentIndex = 0
     currentPiece = bag[currentIndex][currentRot]
     currentPos = spawnPos[pieceDetector(bag[currentIndex][0])]
-    nextIndex = 1
     level = 0
     lines = 0
-    gravity = 7500000
+    gravity = 750
+    nextIndex = 1
     linesRequired = 4
     holdPieceIndex = null
     previewIndex = null
@@ -161,15 +161,13 @@ function reset() {
 
     linesDisplay.innerHTML = '0'
     levelDisplay.innerHTML = '0'
-    clearInterval(timerId)
-
-    draw()
-    previewShape()
-    timerId = setInterval(moveDown, gravity)
 }
 
 startBtn.addEventListener('click', () => {
     reset()
+    draw()
+    previewShape()
+    timerId = setInterval(moveDown, gravity)
 })
 
 document.addEventListener('keydown', control)
@@ -215,6 +213,9 @@ function control(e) {
 
         case 86:
             reset()
+            draw()
+            previewShape()
+            timerId = setInterval(moveDown, gravity)
             break;
 
     }
@@ -303,22 +304,23 @@ function rotate180() {
     draw()
 }
 
-const isRotationValid = (rotation) => {
-
+function isRotationValid(rotation) {
     let isValid = true
     let rotatedPiece = bag[currentIndex][rotation]
 
     rotatedPiece.forEach(index => {
-        if (squares[currentPos + index].classList.contains('taken')) 
-            isValid = false  
+        if (squares[currentPos + index].classList.contains('taken')) {
+            isValid = false
+        }
     })
     
 
     if (rotatedPiece.some(index => {
         x = (currentPos + index) % width
         return Math.abs(x - (currentPos%width)) >=width/2
-    }))
+    })) {
         isValid = false
+    }
 
     return isValid
 }
@@ -328,10 +330,10 @@ function hardDrop() {
     
     let pieceBeforeDrop = currentPiece
 
-    while (pieceBeforeDrop == currentPiece) 
+    while (pieceBeforeDrop == currentPiece) {
         moveDown()
-    
-    
+    }
+
     timerId = setInterval(moveDown,gravity)
 }
 
