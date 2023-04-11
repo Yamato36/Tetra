@@ -11,6 +11,11 @@ h2 {
     color: rgb(160, 160, 160);
 }
 
+h3 {
+    color: rgb(160, 160, 160);
+    margin-top: 30px;
+}
+
 body {
     background-color: rgb(30, 30, 30);
 }
@@ -29,12 +34,12 @@ body {
 }
 
 .grid {
-    width: 410px;
-    height: 820px;
+    width: 414px;
+    height: 824px;
     display: flex;
     flex-wrap: wrap;
     margin-top: 40px;
-    margin-left: 40%;
+    margin-left: 19.6%;
     background-color: rgb(42, 42, 42);
     border-top: 1px solid rgb(160, 160, 160);
     border-left: 1px solid rgb(160, 160, 160);
@@ -88,6 +93,10 @@ body {
     width: 40px;
 }
 
+.pieceGray {
+    background-color: rgb(100, 100, 100);
+}
+
 .pieceOrange {
     background-color: rgb(255, 169, 9);
 }
@@ -116,6 +125,29 @@ body {
     background-color: rgb(129, 224, 255);
 }
 
+#play-button:hover {
+    background-color: rgb(0, 120, 0);
+}
+
+#controls {
+    margin-left: 2%;
+    margin-top: 60px;
+}
+
+#controls h2 {
+    margin-left: 20px;
+}
+
+#leftColumn {
+    text-align: start;
+    float: left;
+}
+
+#rightColumn {
+    text-align: end;
+    float: left;
+}
+
 #play-button {
     background-color: rgb(0, 80, 0);
     color: rgb(160, 160, 160);
@@ -123,8 +155,4 @@ body {
     padding: 20px 40px;
     cursor: pointer;
     margin-top: 124px;
-}
-
-#play-button:hover {
-    background-color: rgb(0, 120, 0);
 }
