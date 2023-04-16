@@ -1,19 +1,24 @@
 * {
     font-family: 'Press Start 2P', cursive;
+    color: rgb(160, 160, 160);;
 }
 
 h1 {
-    color: rgb(160, 160, 160);
-    font-size: 60px;
+    font-size: 6vh;
 }
 
 h2 {
-    color: rgb(160, 160, 160);
+    font-size: 2vh;
 }
 
-h3 {
-    color: rgb(160, 160, 160);
-    margin-top: 30px;
+p {
+    margin-top: 3vh;
+    font-size: 1.5vh;
+}
+
+span {
+    margin-top: 3vh;
+    font-size: 1.5vh;
 }
 
 body {
@@ -21,76 +26,76 @@ body {
 }
 
 .container {
+    justify-content: center;
     display: flex;
 }
 
 .info {
-    margin-left: 40px;
-    margin-top: 10px;
+    margin-left: 5vh;
+    margin-top: 4vh;
 }
 
 .data {
-    margin-top: 40px;
+    margin-top: 4.5vh;
 }
 
 .grid {
-    width: 414px;
-    height: 824px;
+    height: 80vh;
+    width: 40vh;
     display: flex;
     flex-wrap: wrap;
-    margin-top: 40px;
-    margin-left: 19.6%;
+    margin-top: 5vh;
+    margin-left: 2vw;
     background-color: rgb(42, 42, 42);
-    border-top: 1px solid rgb(160, 160, 160);
-    border-left: 1px solid rgb(160, 160, 160);
-    border-right: 2px solid rgb(160, 160, 160);
-    border-bottom: 2px solid rgb(160, 160, 160);
+    border-top: 0.2vh solid rgb(160, 160, 160);
+    border-left: 0.2vh solid rgb(160, 160, 160);
+    border-right: 0.4vh solid rgb(160, 160, 160);
+    border-bottom: 0.4vh solid rgb(160, 160, 160);
 }
 
 .grid .detector {
-    border-top: 0px solid rgb(160, 160, 160);
-    border-left: 0px solid rgb(160, 160, 160);
+    border-top: 0vh;
+    border-left: 0vh;
 }
 
 .grid div {
-    height: 40px;
-    width: 40px;
-    border-top: 1px solid rgb(160, 160, 160);
-    border-left: 1px solid rgb(160, 160, 160);
+    height: 3.84vh;
+    width: 3.82vh;
+    border-top: 0.2vh solid rgb(160, 160, 160);
+    border-left: 0.2vh solid rgb(160, 160, 160);
 }
 
 #hold {
-    margin-top: 150px;
-    margin-left: 2px;
+    margin-top: 5vh;
+    margin-left: 0.4vh;
 }
 
 .hold-grid {
-    width: 160px;
-    height: 80px;
-    flex-wrap: wrap ;
+    width: 16vh;
+    height: 8vh;
+    flex-wrap: wrap;
     display: flex;
 }
 
 .hold-grid div {
-    height: 40px;
-    width: 40px;
+    height: 4vh;
+    width: 4vh;
 }
 
 #next {
-    margin-top: 40px;
-    margin-left: 2px;
+    margin-top: 5vh;
 }
 
 .preview-grid {
-    width: 160px;
-    height: 80px;
-    flex-wrap: wrap ;
+    width: 16vh;
+    height: 8vh;
+    flex-wrap: wrap;
     display: flex;
 }
 
 .preview-grid div {
-    height: 40px;
-    width: 40px;
+    height: 4vh;
+    width: 4vh;
 }
 
 .pieceGray {
@@ -129,13 +134,16 @@ body {
     background-color: rgb(0, 120, 0);
 }
 
+#tooltip {
+    margin-bottom: 8vh;
+}
+
 #controls {
-    margin-left: 2%;
-    margin-top: 60px;
+    margin-top: 4vh;
 }
 
 #controls h2 {
-    margin-left: 20px;
+    margin-left: 1vw;
 }
 
 #leftColumn {
@@ -146,13 +154,17 @@ body {
 #rightColumn {
     text-align: end;
     float: left;
+    margin-left: 3vw;
+}
+
+.arrows {
+    margin-top: 2.5vh;
 }
 
 #play-button {
     background-color: rgb(0, 80, 0);
-    color: rgb(160, 160, 160);
-    font-size: 20px;
-    padding: 20px 40px;
+    font-size: 2vh;
+    padding: 2vh 4vh;
     cursor: pointer;
-    margin-top: 124px;
+    margin-top: 18vh;
 }
