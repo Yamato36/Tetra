@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <script src="tetra.js" charset="utf-8" defer></script>
+        <link rel="shortcut icon" href="#">
         <link rel="stylesheet" href="styles.css">
         <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"/>
         <title>Tetra</title>
@@ -10,32 +11,101 @@
     <body>
         <div class="container">
             <div id="controls">
+                <div id="tooltip">
+                    <p>to reassign the</p>
+                    <p>controls, klick</p>
+                    <p>on the key and </p>
+                    <p>type the new key.</p>
+                    <p>the key might be</p>
+                    <p>displayed wrongly.</p>
+                </div>
                 <h2>Controls: </h2>
-                <div id="controlsDescription">
-                    <div id="leftColumn">
-                        <h3>Move:</h3>
-                        <h3>Rotate CW</h3>
-                        <h3>Rotate CCW:</h3>
-                        <h3>Flip:</h3>
-                        <h3>Soft Drop:</h3>
-                        <h3>Hard Drop:</h3>
-                        <h3>Hold:</h3>
-                        <h3>Reset:</h3>
-                    </div>
-
-                    <div id="rightColumn">
-                        <h3>← / →</h3>
-                        <h3>d</h3>
-                        <h3>a</h3>
-                        <h3>s</h3>
-                        <h3>↑</h3>
-                        <h3>↓</h3>
-                        <h3>Shift</h3>
-                        <h3>f</h3>
-                    </div>
+                <div id="leftColumn">
+                    <p>Move Left:</p>
+                    <p>Move Right:</p>
+                    <p>Rotate CW</p>
+                    <p>Rotate CCW:</p>
+                    <p>Flip:</p>
+                    <p>Soft Drop:</p>
+                    <p>Hard Drop:</p>
+                    <p>Hold:</p>
+                    <p>Reset:</p>
+                </div>
+                <div id="rightColumn">
+                    <p>
+                        <span class="arrows" id="moveLeft"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignMoveLeft)";>
+                            ←
+                        </span>
+                    </p>
+                    <p>
+                        <span class="arrows" id="moveRight"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignMoveRight)";>
+                            →
+                        </span>
+                    </p>
+                    <p>
+                        <span id="rotateCW"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignRotateCW)";>
+                            D
+                        </span>
+                    </p>
+                    <p>
+                        <span id="rotateCCW"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignRotateCCW)";>
+                            A
+                        </span>
+                    </p>
+                    <p>
+                        <span id="flip"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignFlip)";>
+                            S
+                        </span>
+                    </p>
+                    <p>
+                        <span id="softDrop"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignSoftDrop)";>
+                            ↑
+                        </span>
+                    </p>
+                    <p>
+                        <span id="hardDrop"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignHardDrop)";>
+                            ↓
+                        </span>
+                    </p>
+                    <p>
+                        <span id="hold"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignHold)";>
+                            ⇧
+                        </span>
+                    </p>
+                    <p>
+                        <span id="reset"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'"
+                            onclick="document.addEventListener('keydown', reassignReset)";>
+                            F
+                        </span>
+                    </p>
                 </div>
             </div>
-
             <div class="grid">
                 <div></div>
                 <div></div>
@@ -248,12 +318,10 @@
                 <div class="taken detector"></div>
                 <div class="taken detector"></div>
             </div>
-
             <div class="info">
                 <h1>TETRA</h1>
                 <h2 class="data">Lines: <span id="lines">0 / 4</span></h2>
                 <h2 class="data">Level: <span id="level">0</span></h2>
-
                 <h2 id="hold">Hold:</h2>
                 <div class="hold-grid">
                     <div></div>
@@ -265,7 +333,6 @@
                     <div></div>
                     <div></div>
                 </div>
-
                 <h2 id="next">Next:</h3>
                 <div class="preview-grid">
                     <div></div>
@@ -277,7 +344,6 @@
                     <div></div>
                     <div></div>
                 </div>
-                
                 <button id="play-button">Play</button>
             </div>
         </div>
