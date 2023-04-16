@@ -1,3 +1,13 @@
+/*
+To-Do:
+
+-   top rows
+-   start screen
+-   own input controller
+-   fuckting speed up bug
+-   larger preview
+*/
+
 const width = 10
 const previewWidth = 4
 const grid = document.querySelector('.grid')
@@ -6,6 +16,15 @@ const holdSquares = document.querySelectorAll('div.hold-grid div')
 const linesDisplay = document.querySelector('#lines')
 const levelDisplay = document.querySelector('#level')
 const startBtn = document.querySelector('#play-button')
+const moveLeftButton = document.querySelector('#moveLeft')
+const moveRightButton = document.querySelector('#moveRight')
+const rotateCWButton = document.querySelector('#rotateCW')
+const rotateCWWButton = document.querySelector('#rotateCCW')
+const flipButton = document.querySelector('#flip')
+const softDropButton = document.querySelector('#softDrop')
+const hardDropButton = document.querySelector('#hardDrop')
+const holdButton = document.querySelector('#hold')
+const resetButton = document.querySelector('#reset')
 let squares = Array.from(document.querySelectorAll('.grid div'))
 
 const jPiece = [
@@ -90,7 +109,7 @@ let gravity = 750
 let newGame = true
 let nextIndex = 1
 let linesRequired = 4
-let cooldownActive = true
+let cooldownActive = false
 let holdPieceIndex
 let currentColour
 let previewIndex
@@ -98,9 +117,19 @@ let cooldownId
 let nextColour
 let timerId
 
+// set the standard controls
+let moveLeftKeycode = 37
+let moveRightKeycode = 39
+let rotateCWKeycode = 68
+let rotateCCWKeycode = 65
+let flipKeycode = 83
+let softDropKeycode = 38
+let hardDropKeycode = 40
+let holdKeycode = 16
+let resetKeycode = 70
+
 function reset() {
     // clear everything, but dont restart a new game
-
     clearInterval(timerId)
     undraw()
 
@@ -150,22 +179,23 @@ function reset() {
     nextColour = null
     timerId = null
 
-    linesDisplay.innerHTML = '0'
+    linesDisplay.innerHTML = '0 / 4'
     levelDisplay.innerHTML = '0'
 }
 
 startBtn.addEventListener('click', () => {
     //clear everything the first time play is pressed, make a new game for the second time
     if (newGame == true) {
-        draw()
-        previewShape()
-        timerId = setInterval(moveDown, gravity)
         newGame = false
+        gravity = 750
+        timerId = setInterval(moveDown, gravity)
+        previewShape()
+        draw()
     }
 
     else {
-        reset()
         newGame = true
+        reset()
     }
 })
 
@@ -174,33 +204,33 @@ document.addEventListener('keydown', control)
 function control(e) {
     switch (e.keyCode) {
 
-        case 37:
+        case moveLeftKeycode:
             moveLeft()
             break;
 
-        case 39:
+        case moveRightKeycode:
             moveRight()
             break;
 
-        case 68:
+        case rotateCWKeycode:
             if (isRotationValid((currentRot + 1) % 4)) {
                 rotateCW()
             }
             break;
 
-        case 65:
+        case rotateCCWKeycode:
             if (isRotationValid((currentRot + 3)%4)) {
                 rotateCCW()
             }
             break;
 
-        case 83:
+        case flipKeycode:
             if (isRotationValid((currentRot + 2) % 4)) {
                 rotate180()
             }
             break;
 
-        case 38:
+        case softDropKeycode:
             // move down, if no cooldown
             if (!cooldownActive) {
                 undraw()
@@ -215,15 +245,15 @@ function control(e) {
             }
             break;
 
-        case 40:
+        case hardDropKeycode:
             hardDrop()
             break;
 
-        case 16:
+        case holdKeycode:
             hold()
             break;
 
-        case 70:
+        case resetKeycode:
             // clear game and make new game
             reset()
             draw()  
@@ -233,10 +263,67 @@ function control(e) {
     }
 }
 
+// if one of the keys gets clicked, assign the function to the next pressed key
+function reassignMoveLeft(e) {
+    moveLeftKeycode = e.keyCode
+    moveLeftButton.innerHTML = String.fromCharCode(e.keyCode)
+    document.removeEventListener('keydown', reassignMoveLeft)
+}
+
+function reassignMoveRight(e) {
+    moveRightKeycode = e.keyCode
+    moveRightButton.innerHTML = String.fromCharCode(e.keyCode)
+    document.removeEventListener('keydown', reassignMoveRight)
+}
+
+function reassignRotateCW(e) {
+   rotateCWKeycode = e.keyCode
+   rotateCWButton.innerHTML = String.fromCharCode(e.keyCode)
+   document.removeEventListener('keydown', reassignRotateCW)
+}
+
+function reassignRotateCCW(e) {
+   rotateCCWKeycode = e.keyCode
+   rotateCWWButton.innerHTML = String.fromCharCode(e.keyCode)
+   document.removeEventListener('keydown', reassignRotateCCW)
+}
+
+function reassignFlip(e) {
+   flipKeycode = e.keyCode
+   flipButton.innerHTML = String.fromCharCode(e.keyCode)
+   document.removeEventListener('keydown', reassignFlip)
+}
+
+function reassignSoftDrop(e) {
+   softDropKeycode = e.keyCode
+   softDropButton.innerHTML = String.fromCharCode(e.keyCode)
+   document.removeEventListener('keydown', reassignSoftDrop)
+}
+
+function reassignHardDrop(e) {
+   hardDropKeycode = e.keyCode
+   hardDropButton.innerHTML = String.fromCharCode(e.keyCode)
+   document.removeEventListener('keydown', reassignHardDrop)
+}
+
+function reassignHold(e) {
+   holdKeycode = e.keyCode
+   holdButton.innerHTML = String.fromCharCode(e.keyCode)
+   document.removeEventListener('keydown', reassignHold)
+}
+
+function reassignReset(e) {
+   resetKeycode = e.keyCode
+   resetButton.innerHTML = String.fromCharCode(e.keyCode)
+   document.removeEventListener('keydown', reassignReset)
+}
+
 function draw() {
-    // draw hologram
+    // draw hologram and ral piece
     hologramPiece = currentPiece
     hologramPos = currentPos
+    currentPiece = bag[currentIndex][currentRot]
+    currentColour = colours[pieceDetector(bag[currentIndex][0])]
 
     while (!hologramPiece.some(index => squares[hologramPos + index + width].classList.contains('taken'))) {
         hologramPos += width
@@ -246,20 +333,14 @@ function draw() {
         squares[hologramPos + index].classList.add('pieceGray')
     })
 
-    // draw real piece
-    currentPiece = bag[currentIndex][currentRot]
-    currentColour = colours[pieceDetector(bag[currentIndex][0])]
-
     currentPiece.forEach(index => {
         squares[currentPos + index].classList.add(currentColour)
     })
 }
 
 function undraw() {
-    // undraw hologram
+    // undraw hologram and real piece
     hologramPiece.forEach(index => { squares[hologramPos + index].className = '' })
-    
-    // undraw real piece
     currentPiece.forEach(index => { squares[currentPos + index].className = '' })
 }
 
@@ -419,28 +500,37 @@ function hold() {
 }
 
 function freeze() {
-    // create collision 
-    currentPiece.forEach(index => squares[currentPos + index].classList.add('taken'))
-    // cycle in next piece
-    currentIndex = nextIndex
-    nextIndex ++
+    if (currentPiece.some(index => squares[currentPos + index + width].classList.contains('taken'))) {
+        // undraw hologram and redraw overwritten squares of the real piece
+        hologramPiece.forEach(index => { squares[hologramPos + index].className = '' })
+        currentPiece.forEach(index => {
+            squares[currentPos + index].classList.add(currentColour)
+        })
 
-    // renew bag, if used up
-    if (nextIndex === bag.length) {
-        nextIndex = 0
+        // create collision 
+        currentPiece.forEach(index => squares[currentPos + index].classList.add('taken'))
+        
+        // cycle in next piece
+        currentIndex = nextIndex
+        nextIndex ++
 
-        for (let i = bag.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [bag[i], bag[j]] = [bag[j], bag[i]];
+        // renew bag, if used up
+        if (nextIndex === bag.length) {
+            nextIndex = 0
+
+            for (let i = bag.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [bag[i], bag[j]] = [bag[j], bag[i]];
+            }
         }
+
+        // update game state and board
+        currentPos = spawnPos[pieceDetector(bag[currentIndex][0])]
+        currentRot = 0
+        currentPiece = bag[currentIndex][currentRot]
     }
 
-    // update game state and board
-    currentPos = spawnPos[pieceDetector(bag[currentIndex][0])]
-    currentRot = 0
     cooldownActive = false
-    currentPiece = bag[currentIndex][currentRot]
-    
     addScore()
     leveling()
     draw()
@@ -504,9 +594,8 @@ function gameOver() {
     // if no piece placeable, reset
     if(currentPiece.some(index => squares[currentPos + index].classList.contains('taken'))) {
         reset()
+        newGame = true
     }
-
-    newGame = true
 }
 
 function moveDown() {
@@ -521,6 +610,20 @@ function moveDown() {
             cooldownId = setTimeout(freeze, 750)
         }
     }
+
+    else {
+        if (!currentPiece.some(index => squares[currentPos + index + width].classList.contains('taken'))) {
+            cooldownActive = false
+            clearTimeout(cooldownId)
+            addScore()
+            leveling()
+            draw()
+            previewShape()
+            gameOver()
+            clearInterval(timerId)
+            timerId = setInterval(moveDown, gravity)
+        }
+    }   
 }
 
 function pieceDetector(piece) {
