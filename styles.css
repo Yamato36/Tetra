@@ -4,7 +4,7 @@
 }
 
 h1 {
-    font-size: 6vh;
+    font-size: 5vh;
 }
 
 h2 {
@@ -13,12 +13,12 @@ h2 {
 
 p {
     margin-top: 3vh;
-    font-size: 1.5vh;
+    font-size: 2vh;
 }
 
 span {
     margin-top: 3vh;
-    font-size: 1.5vh;
+    font-size: 2vh;
 }
 
 body {
@@ -40,17 +40,39 @@ body {
 }
 
 .grid {
-    height: 80vh;
+    height: 88vh;
     width: 40vh;
     display: flex;
     flex-wrap: wrap;
     margin-top: 5vh;
     margin-left: 2vw;
+    position: relative;
     background-color: rgb(42, 42, 42);
-    border-top: 0.2vh solid rgb(160, 160, 160);
-    border-left: 0.2vh solid rgb(160, 160, 160);
-    border-right: 0.4vh solid rgb(160, 160, 160);
-    border-bottom: 0.4vh solid rgb(160, 160, 160);
+}
+
+.grid :not(.topSquare, .detector) {
+    height: 3.84vh;
+    width: 3.82vh;
+    border-bottom: 0.2vh solid rgb(160, 160, 160);
+    border-right: 0.2vh solid rgb(160, 160, 160);
+}
+
+.grid::before {
+    content: " ";
+    left: -0.35vh;
+    position: absolute;
+    width: 39.8vh;
+    height: 87.5vh;
+    border: 0.4vh solid rgb(160, 160, 160);
+}
+
+.grid::after {
+    content: " ";
+    top: 7.8vh;
+    position: absolute;
+    width: 39.85vh;
+    height: 8vh;
+    border-top: 0.4vh solid rgb(172, 48, 48);
 }
 
 .grid .detector {
@@ -58,15 +80,15 @@ body {
     border-left: 0vh;
 }
 
-.grid div {
+.grid .topSquare {
+    border-bottom: 0.2vh solid rgb(69, 69, 69);
+    border-right: 0.2vh solid rgb(69, 69, 69);
     height: 3.84vh;
     width: 3.82vh;
-    border-top: 0.2vh solid rgb(160, 160, 160);
-    border-left: 0.2vh solid rgb(160, 160, 160);
 }
 
 #hold {
-    margin-top: 5vh;
+    margin-top: 12.5vh;
     margin-left: 0.4vh;
 }
 
@@ -99,35 +121,35 @@ body {
 }
 
 .pieceGray {
-    background-color: rgb(100, 100, 100);
+    background-color: rgb(100, 100, 100) !important;
 }
 
 .pieceOrange {
-    background-color: rgb(255, 169, 9);
+    background-color: rgb(255, 169, 9) !important;
 }
 
 .pieceBlue {
-    background-color: rgb(88, 88, 255);
+    background-color: rgb(88, 88, 255) !important;
 }
 
 .pieceGreen {
-    background-color: rgb(189, 238, 117);
+    background-color: rgb(189, 238, 117) !important;
 }
 
 .pieceRed {
-    background-color: rgb(223, 81, 81);
+    background-color: rgb(223, 81, 81) !important;
 }
 
 .piecePurple {
-    background-color: rgb(143, 42, 143);
+    background-color: rgb(143, 42, 143) !important;
 }
 
 .pieceYellow {
-    background-color: rgb(240, 240, 99);
+    background-color: rgb(240, 240, 99) !important;
 }
 
 .pieceLightBlue {
-    background-color: rgb(129, 224, 255);
+    background-color: rgb(129, 224, 255) !important;
 }
 
 #play-button:hover {
@@ -138,12 +160,17 @@ body {
     margin-bottom: 8vh;
 }
 
+#tooltip p {
+    font-size: 1.5vh;
+}
+
 #controls {
-    margin-top: 4vh;
+    margin-top: 8vh;
 }
 
 #controls h2 {
     margin-left: 1vw;
+    margin-top: 12vh;
 }
 
 #leftColumn {
@@ -157,14 +184,10 @@ body {
     margin-left: 3vw;
 }
 
-.arrows {
-    margin-top: 2.5vh;
-}
-
 #play-button {
     background-color: rgb(0, 80, 0);
-    font-size: 2vh;
+    font-size: 3vh;
     padding: 2vh 4vh;
     cursor: pointer;
-    margin-top: 18vh;
+    margin-top: 20vh;
 }
