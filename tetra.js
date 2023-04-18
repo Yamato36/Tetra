@@ -1,10 +1,8 @@
 /*
 To-Do:
 
--   top rows
 -   start screen
 -   own input controller
--   fuckting speed up bug
 -   larger preview
 */
 
@@ -16,6 +14,7 @@ const holdSquares = document.querySelectorAll('div.hold-grid div')
 const linesDisplay = document.querySelector('#lines')
 const levelDisplay = document.querySelector('#level')
 const startBtn = document.querySelector('#play-button')
+const pauseBtn = document.querySelector('#pause-button')
 const moveLeftButton = document.querySelector('#moveLeft')
 const moveRightButton = document.querySelector('#moveRight')
 const rotateCWButton = document.querySelector('#rotateCW')
@@ -91,6 +90,7 @@ const colours = ['pieceBlue', 'pieceOrange', 'pieceGreen', 'pieceRed', 'piecePur
 
 const pieces = [jPiece, lPiece, sPiece, zPiece, tPiece, oPiece, iPiece]
 let bag = [...pieces]
+let nextBag = [...pieces]
 
 for (let i = bag.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -100,15 +100,17 @@ for (let i = bag.length - 1; i > 0; i--) {
 let currentRot = 0
 let currentIndex = 0
 let currentPiece = bag[currentIndex][currentRot]
-let currentPos = spawnPos[pieceDetector(bag[currentIndex][0])]
+let currentPos = spawnPos[pieceTranslator(bag[currentIndex][0])]
 let hologramPiece = currentPiece
 let hologramPos = currentPos
 let level = 0
 let lines = 0
-let gravity = 750
+let gravity = 1000
 let newGame = true
 let nextIndex = 1
+let cooldownTime = 650
 let linesRequired = 4
+let pauseToggle = 'unpaused'
 let cooldownActive = false
 let holdPieceIndex
 let currentColour
@@ -117,7 +119,7 @@ let cooldownId
 let nextColour
 let timerId
 
-// set the standard controls
+// set standard controls
 let moveLeftKeycode = 37
 let moveRightKeycode = 39
 let rotateCWKeycode = 68
@@ -129,16 +131,10 @@ let holdKeycode = 16
 let resetKeycode = 70
 
 function reset() {
-    // clear everything, but dont restart a new game
-    clearInterval(timerId)
-    undraw()
-
-    // clear the game board
-    for (let i = 0; i < 199; i++) {
-        squares.forEach(squares => {
-            squares.className = ''
-        })
-    }
+    // clear the game boards
+    squares.forEach(squares => {
+        squares.className = ''
+    })
 
     holdSquares.forEach(holdSquares => {
         holdSquares.className = ''
@@ -149,9 +145,14 @@ function reset() {
     })
 
     // add the lowest detector line
-    for (let i = squares.length - width; i < 20 * width + 10; i++) {
+    for (let i = squares.length - width; i < 22 * width + 10; i++) {
         squares[i].classList.add('taken')
         squares[i].classList.add('detector')
+    }
+
+    // add the two highest top lines
+    for (let i = 0; i < 2 * width; i++) {
+        squares[i].classList.add('topSquare')
     }
 
     // randomize the bag
@@ -160,46 +161,55 @@ function reset() {
         [bag[i], bag[j]] = [bag[j], bag[i]]
     }
 
+    for (let i = nextBag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nextBag[i], nextBag[j]] = [nextBag[j], nextBag[i]]
+    }
+
     currentRot = 0
     currentIndex = 0
     currentPiece = bag[currentIndex][currentRot]
-    currentPos = spawnPos[pieceDetector(bag[currentIndex][0])]
+    currentPos = spawnPos[pieceTranslator(bag[currentIndex][0])]
     hologramPiece = currentPiece
     hologramPos = currentPos
     level = 0
     lines = 0
-    gravity = 750
+    gravity = 1000
     nextIndex = 1
     linesRequired = 4
+    pauseToggle = 'unpaused'
     cooldownActive = false
     holdPieceIndex = null
     currentColour = null
     previewIndex = null
     cooldownId = null
     nextColour = null
-    timerId = null
+   
 
     linesDisplay.innerHTML = '0 / 4'
     levelDisplay.innerHTML = '0'
+
+    clearInterval(timerId)
 }
 
 startBtn.addEventListener('click', () => {
     //clear everything the first time play is pressed, make a new game for the second time
     if (newGame == true) {
-        newGame = false
-        gravity = 750
+        gravity = 1000
+        clearInterval(timerId)
         timerId = setInterval(moveDown, gravity)
         previewShape()
         draw()
+        document.addEventListener('keydown', control)
+        newGame = false
+        pauseToggle = 'unpaused'
     }
 
     else {
-        newGame = true
         reset()
+        newGame = true
     }
 })
-
-document.addEventListener('keydown', control)
 
 function control(e) {
     switch (e.keyCode) {
@@ -258,8 +268,14 @@ function control(e) {
             reset()
             draw()  
             previewShape()
+            clearInterval(timerId)
             timerId = setInterval(moveDown, gravity)
             break;
+
+        case 222:
+        // cheat key
+        lines ++
+        break;
     }
 }
 
@@ -322,8 +338,9 @@ function draw() {
     // draw hologram and ral piece
     hologramPiece = currentPiece
     hologramPos = currentPos
+
     currentPiece = bag[currentIndex][currentRot]
-    currentColour = colours[pieceDetector(bag[currentIndex][0])]
+    currentColour = colours[pieceTranslator(bag[currentIndex][0])]
 
     while (!hologramPiece.some(index => squares[hologramPos + index + width].classList.contains('taken'))) {
         hologramPos += width
@@ -342,6 +359,13 @@ function undraw() {
     // undraw hologram and real piece
     hologramPiece.forEach(index => { squares[hologramPos + index].className = '' })
     currentPiece.forEach(index => { squares[currentPos + index].className = '' })
+
+    // reset the top squares, if they got cleared (with margin for safety)
+    if (currentPos < 40) {
+        for (let i = 0; i < 2 * width; i++) {
+            squares[i].classList.add('topSquare')
+        }
+    }
 }
 
 function moveLeft() {
@@ -440,8 +464,6 @@ function isRotationValid(rotation) {
 function hardDrop() {
     // deactivate game loop, move down until piece has been changed by freeze freezing the previous piece
     let pieceBeforeDrop = currentPiece
-    clearInterval(timerId)
-    undraw()
     
     while (pieceBeforeDrop == currentPiece) {
         undraw()
@@ -450,10 +472,11 @@ function hardDrop() {
 
         if (currentPiece.some(index => squares[currentPos + index + width].classList.contains('taken'))) {
             freeze()
+            if (newGame) {
+                return
+            }
         }
     }
- 
-    timerId = setInterval(moveDown, gravity)
 }
 
 function hold() {
@@ -490,8 +513,8 @@ function hold() {
         holdSquares.className = ''
     })
 
-    previewPieces[pieceDetector(bag[holdPieceIndex][0])].forEach(index => {
-        holdSquares[index].classList.add(colours[pieceDetector(bag[holdPieceIndex][0])])
+    previewPieces[pieceTranslator(bag[holdPieceIndex][0])].forEach(index => {
+        holdSquares[index].classList.add(colours[pieceTranslator(bag[holdPieceIndex][0])])
     })
 
     currentPiece = bag[currentIndex][currentRot]
@@ -509,33 +532,54 @@ function freeze() {
 
         // create collision 
         currentPiece.forEach(index => squares[currentPos + index].classList.add('taken'))
-        
+
+        // check if game is over
+        for (let i = 0; i < 4; i++) {
+            if (currentPos + i < 20) {
+                document.removeEventListener('keydown', control)
+                newGame = true
+                reset()
+                return
+            }
+        }
+         
         // cycle in next piece
         currentIndex = nextIndex
         nextIndex ++
 
+        // update game state
+        currentPos = spawnPos[pieceTranslator(bag[currentIndex][0])]
+        currentRot = 0
+        currentPiece = bag[currentIndex][currentRot]
+
+        // set bag to next bag, if used up
+        if(bag.length == 8) {
+            bag.splice(6, 1)
+        }
+
         // renew bag, if used up
-        if (nextIndex === bag.length) {
+        if (currentIndex == 6) {
+            let temp
+
+            temp = bag[6]
             nextIndex = 0
 
+            // randomize next bag
             for (let i = bag.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [bag[i], bag[j]] = [bag[j], bag[i]];
             }
-        }
 
-        // update game state and board
-        currentPos = spawnPos[pieceDetector(bag[currentIndex][0])]
-        currentRot = 0
-        currentPiece = bag[currentIndex][currentRot]
+            bag.splice(6, 0, temp)
+        }
     }
 
+    // update the board
     cooldownActive = false
-    addScore()
+    lineClear()
     leveling()
     draw()
     previewShape()
-    gameOver()
 }
 
 function leveling() {
@@ -544,7 +588,7 @@ function leveling() {
         level ++
         lines = lines - linesRequired
         linesRequired = level * 2 + 4
-        gravity *= 0.75
+        gravity *= 0.8
         levelDisplay.innerHTML = level
         clearInterval(timerId)
         timerId = setInterval(moveDown, gravity)
@@ -553,9 +597,9 @@ function leveling() {
     linesDisplay.innerHTML = `${lines} / ${linesRequired}`
 }
 
-function addScore() {
+function lineClear() {
     // check, if any entire row has collision
-    for (let i = 0; i < 199; i += width) {
+    for (let i = 2 * width; i < width * 22 - 1; i += width) {
         const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
 
         if(row.every(index => squares[index].classList.contains('taken'))) {
@@ -572,13 +616,18 @@ function addScore() {
             const squaresRemoved = squares.splice(i, width)
             squares = squaresRemoved.concat(squares)
             squares.forEach(cell => grid.appendChild(cell))
+
+            // remove any classes that got moved down by accident
+            for (let i = 20; i < 40; i++) {
+                squares[i].className = ''
+            }
         }
     }
 }
 
 function previewShape() {
     // detect next piece and draw
-    let previewIndex = pieceDetector(bag[nextIndex][0])
+    let previewIndex = pieceTranslator(bag[nextIndex][0])
     let nextColour = colours[previewIndex]
 
     previewSquares.forEach(previewSquares => {
@@ -590,24 +639,18 @@ function previewShape() {
     })
 }
 
-function gameOver() {
-    // if no piece placeable, reset
-    if(currentPiece.some(index => squares[currentPos + index].classList.contains('taken'))) {
-        reset()
-        newGame = true
-    }
-}
-
 function moveDown() {
     //game loop, move down with the interval
     if (!cooldownActive) {
-        undraw()
-        currentPos += width
-        draw()
-
         if (currentPiece.some(index => squares[currentPos + index + width].classList.contains('taken'))) {
             cooldownActive = true
-            cooldownId = setTimeout(freeze, 750)
+            cooldownId = setTimeout(freeze, cooldownTime)
+        }
+
+        else {
+            undraw()
+            currentPos += width
+            draw()
         }
     }
 
@@ -615,18 +658,17 @@ function moveDown() {
         if (!currentPiece.some(index => squares[currentPos + index + width].classList.contains('taken'))) {
             cooldownActive = false
             clearTimeout(cooldownId)
-            addScore()
+            lineClear()
             leveling()
             draw()
             previewShape()
-            gameOver()
             clearInterval(timerId)
             timerId = setInterval(moveDown, gravity)
         }
-    }   
+    }
 }
 
-function pieceDetector(piece) {
+function pieceTranslator(piece) {
     // translate pieces
     piece = JSON.stringify(piece)
 
