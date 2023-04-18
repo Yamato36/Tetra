@@ -3,7 +3,7 @@ To-Do:
 
 -   start screen
 -   own input controller
--   larger preview
+-   make size width and height dependant
 */
 
 const width = 10
@@ -14,7 +14,6 @@ const holdSquares = document.querySelectorAll('div.hold-grid div')
 const linesDisplay = document.querySelector('#lines')
 const levelDisplay = document.querySelector('#level')
 const startBtn = document.querySelector('#play-button')
-const pauseBtn = document.querySelector('#pause-button')
 const moveLeftButton = document.querySelector('#moveLeft')
 const moveRightButton = document.querySelector('#moveRight')
 const rotateCWButton = document.querySelector('#rotateCW')
@@ -82,15 +81,31 @@ const previewPieces = [
     [0, 1, previewWidth+1, previewWidth+2],
     [1, previewWidth, previewWidth+1, previewWidth+2],
     [0, 1, previewWidth, previewWidth+1],
-    [0, 1, 2, 3],
+    [previewWidth, previewWidth + 1, previewWidth + 2, previewWidth + 3],
 ]
 
-const spawnPos = [3, 3, 3, 3, 3, 4, 4]
-const colours = ['pieceBlue', 'pieceOrange', 'pieceGreen', 'pieceRed', 'piecePurple', 'pieceYellow', 'pieceLightBlue']
+const spawnPos = [
+    3, 
+    3, 
+    3, 
+    3, 
+    3, 
+    4, 
+    4
+]
+
+const colours = [
+    'pieceBlue', 
+    'pieceOrange', 
+    'pieceGreen', 
+    'pieceRed', 
+    'piecePurple', 
+    'pieceYellow', 
+    'pieceLightBlue'
+]
 
 const pieces = [jPiece, lPiece, sPiece, zPiece, tPiece, oPiece, iPiece]
 let bag = [...pieces]
-let nextBag = [...pieces]
 
 for (let i = bag.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -98,25 +113,23 @@ for (let i = bag.length - 1; i > 0; i--) {
 }
 
 let currentRot = 0
-let currentIndex = 0
-let currentPiece = bag[currentIndex][currentRot]
-let currentPos = spawnPos[pieceTranslator(bag[currentIndex][0])]
+let currentPiece = bag[0][0]
+let currentPos = spawnPos[pieceTranslator(currentPiece)]
 let hologramPiece = currentPiece
 let hologramPos = currentPos
 let level = 0
 let lines = 0
 let gravity = 1000
 let newGame = true
-let nextIndex = 1
-let cooldownTime = 650
+let previewColour = []
+let previewIndex = []
 let linesRequired = 4
-let pauseToggle = 'unpaused'
+let cooldownTime = 650
 let cooldownActive = false
-let holdPieceIndex
+let previewOffset
 let currentColour
-let previewIndex
 let cooldownId
-let nextColour
+let holdPiece
 let timerId
 
 // set standard controls
@@ -155,36 +168,30 @@ function reset() {
         squares[i].classList.add('topSquare')
     }
 
+    bag = [...pieces]
+
     // randomize the bag
     for (let i = bag.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [bag[i], bag[j]] = [bag[j], bag[i]]
     }
 
-    for (let i = nextBag.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [nextBag[i], nextBag[j]] = [nextBag[j], nextBag[i]]
-    }
-
     currentRot = 0
-    currentIndex = 0
-    currentPiece = bag[currentIndex][currentRot]
-    currentPos = spawnPos[pieceTranslator(bag[currentIndex][0])]
+    currentPiece = bag[0][0]
+    currentPos = spawnPos[pieceTranslator(currentPiece)]
     hologramPiece = currentPiece
     hologramPos = currentPos
     level = 0
     lines = 0
     gravity = 1000
-    nextIndex = 1
+    previewColour = []
+    previewIndex = []
     linesRequired = 4
-    pauseToggle = 'unpaused'
     cooldownActive = false
-    holdPieceIndex = null
+    previewOffset = null
     currentColour = null
-    previewIndex = null
     cooldownId = null
-    nextColour = null
-   
+    holdPiece = null
 
     linesDisplay.innerHTML = '0 / 4'
     levelDisplay.innerHTML = '0'
@@ -202,7 +209,6 @@ startBtn.addEventListener('click', () => {
         draw()
         document.addEventListener('keydown', control)
         newGame = false
-        pauseToggle = 'unpaused'
     }
 
     else {
@@ -273,8 +279,16 @@ function control(e) {
             break;
 
         case 222:
-        // cheat key
-        lines ++
+            // set perfect controls
+            moveLeftKeycode = 188
+            moveRightKeycode = 189
+            rotateCWKeycode = 67
+            rotateCCWKeycode = 89
+            flipKeycode = 88
+            softDropKeycode = 76
+            hardDropKeycode = 190
+            holdKeycode = 16
+            resetKeycode = 86
         break;
     }
 }
@@ -336,11 +350,11 @@ function reassignReset(e) {
 
 function draw() {
     // draw hologram and ral piece
+    currentPiece = bag[0][currentRot]
+    currentColour = colours[pieceTranslator(bag[0][0])]
+
     hologramPiece = currentPiece
     hologramPos = currentPos
-
-    currentPiece = bag[currentIndex][currentRot]
-    currentColour = colours[pieceTranslator(bag[currentIndex][0])]
 
     while (!hologramPiece.some(index => squares[hologramPos + index + width].classList.contains('taken'))) {
         hologramPos += width
@@ -405,11 +419,11 @@ function rotateCW() {
     undraw()
     currentRot++
 
-    if (currentRot === currentPiece.length) {
+    if (currentRot === bag[0].length) {
         currentRot = 0
     }
 
-    currentPiece = bag[currentIndex][currentRot]
+    currentPiece = bag[0][currentRot]
     draw()
 }
 
@@ -419,10 +433,10 @@ function rotateCCW() {
     currentRot --
 
     if (currentRot === -1) {
-        currentRot = currentPiece.length - 1
+        currentRot = bag[0].length - 1
     }
 
-    currentPiece = bag[currentIndex][currentRot]
+    currentPiece = bag[0][currentRot]
     draw()
 }
 
@@ -431,51 +445,24 @@ function rotate180() {
     undraw()
     currentRot += 2
 
-    if (currentRot >= currentPiece.length) {
+    if (currentRot >= bag[0].length) {
         currentRot -= 4
     }
 
-    currentPiece = bag[currentIndex][currentRot]
+    currentPiece = bag[0][currentRot]
     draw()
 }
 
-function isRotationValid(rotation) {
-    let isValid = true
-    let rotatedPiece = bag[currentIndex][rotation]
+function hardDrop() {
+    // move down until something is hit
+    undraw()
 
-    // check if the rotation hits any pieces
-    rotatedPiece.forEach(index => {
-        if (squares[currentPos + index].classList.contains('taken')) {
-            isValid = false
-        }
-    })
-
-    // check if the rotation hits the wall through checking the distance in x in all squares
-    if (rotatedPiece.some(index => {
-        x = (currentPos + index) % width
-        return Math.abs(x - (currentPos % width)) >= width / 2
-    })) { 
-        isValid = false 
+    while (!currentPiece.some(index => squares[currentPos + index + width].classList.contains('taken'))) {
+        currentPos += width
     }
 
-    return isValid
-}
-
-function hardDrop() {
-    // deactivate game loop, move down until piece has been changed by freeze freezing the previous piece
-    let pieceBeforeDrop = currentPiece
-    
-    while (pieceBeforeDrop == currentPiece) {
-        undraw()
-        currentPos += width
-        draw()
-
-        if (currentPiece.some(index => squares[currentPos + index + width].classList.contains('taken'))) {
-            freeze()
-            if (newGame) {
-                return
-            }
-        }
+    if (freeze() == 'game_over') {
+        return
     }
 }
 
@@ -483,29 +470,28 @@ function hold() {
     undraw()
 
     // if it's first piece to be held, set current pice aside and get a new one
-    if (holdPieceIndex == null) {
-        holdPieceIndex = currentIndex
-        currentIndex = nextIndex
-        currentPiece = bag[currentIndex][currentRot]
-        nextIndex ++
+    if (holdPiece == null) {
+        holdPiece = bag[0][0]
+        bag.splice(0, 1)
+        
+        // if bag gets too small, add in a new bag
+        if (bag.length == 5) {
+            let temp = [...pieces]
 
-        // renew bag, if used up
-        if (nextIndex === bag.length) {
-            nextIndex = 0
-
-            for (let i = bag.length - 1; i > 0; i--) {
+            for (let i = temp.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [bag[i], bag[j]] = [bag[j], bag[i]];
+                [temp[i], temp[j]] = [temp[j], temp[i]];
             }
+
+            bag.push.apply(bag, temp)
         }
     }
 
     // else swap held piece and current piece
     else {
-        let temp
-        temp = holdPieceIndex
-        holdPieceIndex = currentIndex
-        currentIndex = temp
+        let temp = holdPiece
+        holdPiece = bag[0][0]
+        bag.splice(0, 1, pieces[pieceTranslator(temp)])
     }
 
     // update game boards
@@ -513,12 +499,11 @@ function hold() {
         holdSquares.className = ''
     })
 
-    previewPieces[pieceTranslator(bag[holdPieceIndex][0])].forEach(index => {
-        holdSquares[index].classList.add(colours[pieceTranslator(bag[holdPieceIndex][0])])
+    previewPieces[pieceTranslator(holdPiece)].forEach(index => {
+        holdSquares[index].classList.add(colours[pieceTranslator(holdPiece)])
     })
 
-    currentPiece = bag[currentIndex][currentRot]
-    previewShape()
+    currentPiece = bag[0][currentRot]
     draw()
 }
 
@@ -537,41 +522,32 @@ function freeze() {
         for (let i = 0; i < 4; i++) {
             if (currentPos + i < 20) {
                 document.removeEventListener('keydown', control)
+                clearInterval(timerId)
                 newGame = true
                 reset()
-                return
+                return 'game_over'
             }
         }
-         
+
         // cycle in next piece
-        currentIndex = nextIndex
-        nextIndex ++
+        bag.splice(0, 1)
+
+        // if bag gets too small, add in a new bag
+        if (bag.length == 5) {
+            let temp = [...pieces]
+
+            for (let i = temp.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [temp[i], temp[j]] = [temp[j], temp[i]];
+            }
+
+            bag.push.apply(bag, temp)
+        }
 
         // update game state
-        currentPos = spawnPos[pieceTranslator(bag[currentIndex][0])]
         currentRot = 0
-        currentPiece = bag[currentIndex][currentRot]
-
-        // set bag to next bag, if used up
-        if(bag.length == 8) {
-            bag.splice(6, 1)
-        }
-
-        // renew bag, if used up
-        if (currentIndex == 6) {
-            let temp
-
-            temp = bag[6]
-            nextIndex = 0
-
-            // randomize next bag
-            for (let i = bag.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [bag[i], bag[j]] = [bag[j], bag[i]];
-            }
-
-            bag.splice(6, 0, temp)
-        }
+        currentPiece = bag[0][0]
+        currentPos = spawnPos[pieceTranslator(currentPiece)]
     }
 
     // update the board
@@ -580,6 +556,8 @@ function freeze() {
     leveling()
     draw()
     previewShape()
+
+    return 'frozen'
 }
 
 function leveling() {
@@ -626,17 +604,26 @@ function lineClear() {
 }
 
 function previewShape() {
-    // detect next piece and draw
-    let previewIndex = pieceTranslator(bag[nextIndex][0])
-    let nextColour = colours[previewIndex]
+    let IPieceOffset = 0
 
-    previewSquares.forEach(previewSquares => {
+    previewSquares.forEach(previewSquares => {  
         previewSquares.className = ''
     })
 
-    previewPieces[previewIndex].forEach(index => {
-        previewSquares[index].classList.add(nextColour)
-    })
+    for (let i = 0; i < 5; i++) {        
+        previewIndex = pieceTranslator(bag[i + 1][0])
+        previewColour = colours[previewIndex]
+
+        if (previewIndex == 6) {
+            IPieceOffset = 1
+        }
+
+        previewOffset = (i - (1 / 3 * IPieceOffset)) * 12
+
+        previewPieces[previewIndex].forEach(index => {
+            previewSquares[index + previewOffset].classList.add(previewColour)
+        })
+    }
 }
 
 function moveDown() {
@@ -666,6 +653,29 @@ function moveDown() {
             timerId = setInterval(moveDown, gravity)
         }
     }
+}
+
+function isRotationValid(rotation) {
+    let isValid = true
+    let rotatedPiece = bag[0][rotation]
+
+    // check if the rotation hits any pieces
+    rotatedPiece.forEach(index => {
+        if (squares[currentPos + index].classList.contains('taken')) {
+            isValid = false
+        }
+    })
+
+    // check if the rotation hits the wall through checking the distance in x in all squares
+    if (rotatedPiece.some(index => {
+        x = (currentPos + index) % width
+        return Math.abs(x - (currentPos % width)) >= width / 2
+        }
+    )) { 
+        isValid = false 
+    }
+
+    return isValid
 }
 
 function pieceTranslator(piece) {
