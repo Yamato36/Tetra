@@ -1,108 +1,80 @@
+<!--                                                                STRUCTURE
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    head
+        script
+        stylesheet
+        favicon
+        font
+
+    left column
+        title
+        points
+        player data
+        settings button
+
+    middle column
+        top squares
+        grid
+        detector squares
+
+    right column
+        hold grid
+        preview grid
+        play button
+
+    settings
+        left controls & inputs
+        right spans & inputs
+-->
+
 <!DOCTYPE html>
 <html>
+
+<!--                                                                   HEAD                                                              
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
     <head>
         <meta charset="utf-8">
-        <script src="tetra.js" charset="utf-8" defer></script>
-        <link rel="shortcut icon" href="#">
-        <link rel="stylesheet" href="styles.css">
+        <script src="tetr.js" charset="utf-8" defer></script>
+        <link rel="stylesheet" href="blo.css">
+        <link rel="shortcut icon" type="image/x-icon" href="../tetrom.ico">
         <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"/>
-        <title>Tetra</title>
+        <title>tetr.js</title>
     </head>
     <body>
         <div class="container">
+
+<!--                                                                LEFT COLUMN                                                              
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
             <div class="leftColumn">
-                <div>
-                    <h1>TETRA</h1>
-                    <h2 class="data">Lines: <span id="lines">0 / 4</span></h2>
-                    <h2 class="data">Level: <span id="level">0</span></h2>
+                <h1>TETR.JS</h1>
+                <h2 class="points">points: <span id="points">0</span></h2>
+                <div id="player_data_left">
+                    <h2>finesse: </h2>
+                    <h2>inputs/P: </h2>
+                    <h2>pieces/S: </h2>
+                    <h2>time: </h2>
                 </div>
-                <h2 id="controls">Controls: </h2>
-                <div id="leftColumn">
-                    <p>Move Left:</p>
-                    <p>Move Right:</p>
-                    <p>Rotate CW</p>
-                    <p>Rotate CCW:</p>
-                    <p>Flip:</p>
-                    <p>Soft Drop:</p>
-                    <p>Hard Drop:</p>
-                    <p>Hold:</p>
-                    <p>Reset:</p>
-                </div>
-                <div id="rightColumn">
+                <div id="player_data_right">
                     <p>
-                        <span class="arrows" id="moveLeft"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignMoveLeft)";>
-                            ←
-                        </span>
+                        <span id="finesse">100</span>%
+                    </p>
+                        <span id="inputsPerPiece">0.0</span>/P
+                    <p>
+                        <span id="piecesPerSecond">0.0</span>/s
                     </p>
                     <p>
-                        <span class="arrows" id="moveRight"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignMoveRight)";>
-                            →
-                        </span>
-                    </p>
-                    <p>
-                        <span id="rotateCW"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignRotateCW)";>
-                            D
-                        </span>
-                    </p>
-                    <p>
-                        <span id="rotateCCW"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignRotateCCW)";>
-                            A
-                        </span>
-                    </p>
-                    <p>
-                        <span id="flip"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignFlip)";>
-                            S
-                        </span>
-                    </p>
-                    <p>
-                        <span id="softDrop"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignSoftDrop)";>
-                            ↑
-                        </span>
-                    </p>
-                    <p>
-                        <span id="hardDrop"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignHardDrop)";>
-                            ↓
-                        </span>
-                    </p>
-                    <p>
-                        <span id="hold"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignHold)";>
-                            ⇧
-                        </span>
-                    </p>
-                    <p>
-                        <span id="reset"
-                            onmouseover="this.style.cursor='pointer'"
-                            onmouseout="this.style.cursor='default'"
-                            onclick="document.addEventListener('keydown', reassignReset)";>
-                            F
-                        </span>
+                        <span id="timerMinutes">00</span>:<span id="timerSeconds">00</span>
                     </p>
                 </div>
+                <button id="settings-button">settings</button>
             </div>
+
+<!--                                                                CENTER COLUMN                                                              
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
             <div class="grid">
                 <div class="topSquare"></div>
                 <div class="topSquare"></div>
@@ -335,8 +307,12 @@
                 <div class="taken detector"></div>
                 <div class="taken detector"></div>
             </div>
+
+<!--                                                                RIGHT COLUMN                                                              
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
             <div class="rightColumn">
-                <h2 id="hold">Hold:</h2>
+                <h2 id="hold">hold:</h2>
                 <div class="hold-grid">
                     <div></div>
                     <div></div>
@@ -347,7 +323,7 @@
                     <div></div>
                     <div></div>
                 </div>
-                <h2 id="next">Next:</h3>
+                <h2 id="next">next:</h3>
                 <div class="preview-grid">
                     <div></div>
                     <div></div>
@@ -406,7 +382,118 @@
                     <div></div>
                     <div></div>
                 </div>
-                <button id="play-button">Play</button>
+                <button id="play-button">play</button>
+            </div>
+
+<!--                                                                LEFT COLUMN                                                              
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+            <div id="settings">
+                <div id="leftColumn">
+                    <p>move left:</p>
+                    <p>move right:</p>
+                    <p>rotate CW</p>
+                    <p>rotate CCW:</p>
+                    <p>flip:</p>
+                    <p>soft drop:</p>
+                    <p>hard drop:</p>
+                    <p>hold:</p>
+                    <p>reset:</p>
+
+                    <div id="leftInputs">
+                        <p>DAS:</p>
+                        <p>ARR:</p>
+                        <p>SDF:</p>
+                        <p>gravity:</p>
+                        <p>cooldown:</p>
+                        <p>music vol.:</p>
+                    </div>
+                </div>
+                <div id="rightColumn">
+                    <p>
+                        <span class="arrows" id="moveLeft"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            ←
+                        </span>
+                    </p>
+                    <p>
+                        <span class="arrows" id="moveRight"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            →
+                        </span>
+                    </p>
+                    <p>
+                        <span id="rotateCW"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            d
+                        </span>
+                    </p>
+                    <p>
+                        <span id="rotateCCW"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            a
+                        </span>
+                    </p>
+                    <p>
+                        <span id="flip"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            s
+                        </span>
+                    </p>
+                    <p>
+                        <span id="softDrop"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            ↑
+                        </span>
+                    </p>
+                    <p>
+                        <span id="hardDrop"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            ↓
+                        </span>
+                    </p>
+                    <p>
+                        <span id="hold"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            shift
+                        </span>
+                    </p>
+                    <p>
+                        <span id="reset"
+                            onmouseover="this.style.cursor='pointer'"
+                            onmouseout="this.style.cursor='default'">
+                            f
+                        </span>
+                    </p>
+                    <div id="rightInputs">
+                        <p>
+                            <input type="number" id="DASInput" required value="140" maxlength="4">
+                        </p>
+                        <p>
+                            <input type="number" id="ARRInput" required value="10" maxlength="4">
+                        </p>
+                        <p>
+                            <input type="number" id="SDFInput" required value="10" size="" maxlength="4">
+                        </p>
+                        <p>
+                            <input type="number" id="gravityInput" required value="1000" size="">
+                        </p>
+                        <p>
+                            <input type="number" id="cooldownInput" required value="650" size="">
+                        </p>
+                        <p>
+                            <input type="range" id="musicInput">
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
